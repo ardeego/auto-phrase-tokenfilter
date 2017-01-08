@@ -53,6 +53,7 @@ public class TestAutoPhrasingTokenFilter extends TestCase {
     assertEquals( "so", term.toString());
     assertTrue(aptf.incrementToken());
     assertEquals( "high", term.toString());
+    aptf.close();
   }
     
   public void testAutoPhraseEmitSingle( ) throws Exception {
@@ -107,6 +108,8 @@ public class TestAutoPhrasingTokenFilter extends TestCase {
     assertEquals( "so", term.toString());
     assertTrue(aptf.incrementToken());
     assertEquals( "high", term.toString());
+    aptf.close();
+    aptf.close();
   }
     
   public void testOverlappingAtBeginning( ) throws Exception {
@@ -129,6 +132,7 @@ public class TestAutoPhrasingTokenFilter extends TestCase {
     assertEquals( "is", term.toString());
     assertTrue(aptf.incrementToken());
     assertEquals( "great", term.toString());
+    aptf.close();
   }
     
   public void testOverlappingAtBeginningEmitSingle( ) throws Exception {
@@ -159,6 +163,7 @@ public class TestAutoPhrasingTokenFilter extends TestCase {
     assertEquals( "is", term.toString());
     assertTrue(aptf.incrementToken());
     assertEquals( "great", term.toString());
+    aptf.close();
   }
     
   public void testOverlappingAtEndEmitSingle( ) throws Exception {
@@ -191,6 +196,7 @@ public class TestAutoPhrasingTokenFilter extends TestCase {
     assertEquals( "city_of_new_york", term.toString());
     assertTrue(aptf.incrementToken());
     assertEquals( "new_york", term.toString());
+    aptf.close();
   }
     
   public void testOverlappingAtEnd( ) throws Exception {
@@ -213,6 +219,7 @@ public class TestAutoPhrasingTokenFilter extends TestCase {
     assertEquals( "great", term.toString());
     assertTrue(aptf.incrementToken());
     assertEquals( "city_of_new_york", term.toString());
+    aptf.close();
   }
     
   public void testIncompletePhrase( ) throws Exception {
@@ -235,6 +242,7 @@ public class TestAutoPhrasingTokenFilter extends TestCase {
     assertEquals( "new", term.toString());
     assertTrue(aptf.incrementToken());
     assertEquals( "york", term.toString());
+    aptf.close();
   }
 
 }

@@ -126,7 +126,7 @@ public class AutoPhrasingQParserPlugin extends QParserPlugin implements Resource
     while( aptf.incrementToken( )) {
       strbuf.append( term.toString( ) ).append( " " );
     }
-        
+    aptf.close();  
     return strbuf.toString();
   }
 
