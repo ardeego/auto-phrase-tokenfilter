@@ -1,8 +1,6 @@
 auto-phrase-tokenfilter
 =======================
-
-Lucene Auto Phrase TokenFilter implementation
-
+**Lucene Auto Phrase TokenFilter implementation**
 
 Performs "auto phrasing" on a token stream. Auto phrases refer to sequences of tokens that
 are meant to describe a single thing and should be searched for as such. When these phrases
@@ -13,7 +11,7 @@ The Autophrasing filter can be combined with a synonym filter to handle cases in
 suffix terms in a phrase are synonymous with the phrase, but where other parts of the phrase are
 not. This enables searching within the phrase to occur selectively, rather than randomly.
 
-##Overview
+#Overview
 
 Search engines work by 'inverse' mapping terms or 'tokens' to the documents that contain
 them. Sometimes a single token uniquely describes a real-world entity or thing but in many
@@ -24,8 +22,15 @@ this type of ambiguity - search engines return documents that contain the words 
 necessarily the 'things' they are looking for. Doing a better job of mapping tokens (the 'units'
 of a search index) to specific things or concepts will help to address this problem.
 
-##Algorithm
+#Version
+<table>
+ <tr><th>Version (tag)</th><th>Lucene / Solr version</th><th>elasticserch version</th><tr>
+ <tr><td>solr-4.10.3</td><td>solr-4.10.3</td><td>not supported</td></tr>
+ <tr><td>solr-6.2.1</td><td>solr-6.2.1</td><td>not supported</td></tr>
+ <tr><td>solr-6.2.1-es-5.0.1</td><td>solr-6.2.1</td><td>5.0.1</td></tr>
+</table>
 
+#Algorithm
 The auto phrase token filter uses a list of phrases that should be kept together as single 
 tokens. As tokens are received by the filter, it keeps a partial phrase that matches 
 the beginning of one or more phrases in this list.  It will keep appending tokens to this 
@@ -34,6 +39,14 @@ appended tokens. If the match breaks before any phrase completes, the filter wil
 the now unmatched tokens that it has collected. If a phrase match completes, that phrase 
 will be emitted to the next filter in the chain.  If a token does not match any of the 
 leading terms in its phrase list, it will be passed on to the next filter unmolested.
+
+#Solr
+##Input Parameters:
+<table>
+ <tr><td>phrases</td><td>file containing auto phrases (one per line)</td><tr>
+ <tr><td>includeTokens</td><td>true|false(default) - if true adds single tokens to output</td></tr>
+ <tr><td>replaceWhitespaceWith</td><td>single character to use to replace whitespace in phrase</td></tr>
+</table>
 
 ##Example schema.xml Configuration
 <pre>
@@ -54,16 +67,7 @@ leading terms in its phrase list, it will be passed on to the next filter unmole
 &lt;/fieldType>
 </pre>
 
-##Input Parameters:
-
-<table>
- <tr><td>phrases</td><td>file containing auto phrases (one per line)</td><tr>
- <tr><td>includeTokens</td><td>true|false(default) - if true adds single tokens to output</td></tr>
- <tr><td>replaceWhitespaceWith</td><td>single character to use to replace whitespace in phrase</td></tr>
-</table>
-
 ##Query Parser Plugin
-
 Due to an issue with Lucene/Solr query parsing, the AutoPhrasingTokenFilter is not effective at query time as
 part of a standard analyzer chain. This is due to the LUCENE-2605 issue in which the query parser sends each token
 to the Analyzer individually and it thus cannot "see" across whitespace boundries. To redress this problem, a wrapper
@@ -74,26 +78,25 @@ protected from the query parser by replacing whitespace within them with another
 To use it in a SearchHandler, add a queryParser section to solrconfig.xml:
 
 <pre>
-  &lt;queryParser name="autophrasingParser" class="com.lucidworks.analysis.AutoPhrasingQParserPlugin" >
+&lt;queryParser name="autophrasingParser" class="com.lucidworks.analysis.AutoPhrasingQParserPlugin" >
       &lt;str name="phrases">autophrases.txt&lt/str>
-  &lt;/queryParser> 
+&lt;/queryParser> 
 </pre>
 
 And a new search handler that uses the query parser:
 
 <pre>
-  &lt;requestHandler name="/autophrase" class="solr.SearchHandler">
-   &lt;lst name="defaults">
-     &lt;str name="echoParams">explicit&lt;/str>
-     &lt;int name="rows">10&lt;/int>
-     &lt;str name="df">text&lt;/str>
-     &lt;str name="defType">autophrasingParser&lt;/str>
-   &lt;/lst>
-  &lt;/requestHandler>
+&lt;requestHandler name="/autophrase" class="solr.SearchHandler">
+ &lt;lst name="defaults">
+   &lt;str name="echoParams">explicit&lt;/str>
+   &lt;int name="rows">10&lt;/int>
+   &lt;str name="df">text&lt;/str>
+   &lt;str name="defType">autophrasingParser&lt;/str>
+ &lt;/lst>
+&lt;/requestHandler>
 </pre>
 
 ##Example Test Code:
-
 The following Java code can be used to show what the AutoPhrasingTokenFilter does:
 
 <pre>
@@ -104,7 +107,7 @@ import org.apache.lucene.analysis.util.CharArraySet;
 
 ...
 
-  public void testAutoPhrase( ) throws Exception {
+public void testAutoPhrase( ) throws Exception {
     // sets up a list of phrases - Normally this would be supplied by AutoPhrasingTokenFilterFactory
     final CharArraySet phraseSets = new CharArraySet(TEST_VERSION_CURRENT, Arrays.asList(
         "income tax", "tax refund", "property tax"
@@ -121,7 +124,7 @@ import org.apache.lucene.analysis.util.CharArraySet;
       hasToken = aptf.incrementToken( );
       if (hasToken) System.out.println( "token:'" + term.toString( ) + "'" );
     } while (hasToken);
-  }
+}
 </pre>
 
 This produces the following output:
@@ -143,10 +146,96 @@ token:'so'
 token:'high'
 </pre>
 
-##Deployment Procedure:
+#elasticsearch
+##Input Parameters:
+<table>
+ <tr><td>phrases_path</td><td>file containing auto phrases (one per line)</td><tr>
+ <tr><td>includeTokens</td><td>true|false(default) - if true adds single tokens to output</td></tr>
+ <tr><td>replaceWhitespaceWith</td><td>single character to use to replace whitespace in phrase</td></tr>
+</table>
 
-To build the autophrasing token filter from source code you will need to install Apache Ant (http://ant.apache.org/bindownload.cgi). Install Ant and then in a linux/unix shell or Windows DOS command window, change to the auto-phrase-tokenfilter directory (i.e. where you downloaded this project to) and type: ant
+##Example index setting
+<pre>
+curl -X PUT 'localhost:9200/test_autophrasing' -d '
+{
+    "settings" : {
+    "number_of_shards" : 1,
+    "number_of_replicas" : 1,
+    "analysis": {
+      "analyzer": {
+        "my_autophrasing_analyzer": {
+          "type": "custom",
+          "tokenizer": "my_standard",
+          "filter": ["autophrasing", "my_stop"]
+        }
+      },
+      "tokenizer": {
+        "my_standard": { 
+          "type": "standard",
+          "max_token_length": 5
+        }
+      },
+      "filter": {
+        "autophrasing" : {
+          "type": "autophrasing",
+          "phrases_path":"dictionary.txt"
+        },
+        "my_stop": {
+          "type":       "stop",
+          "stopwords": ["and", "is", "the"]
+        }
+      }
+    }
+  }
+}'
+</pre>
 
-Assuming that everything went well( BUILD SUCCESSFUL message from Ant), you will have a Java archive file called auto-phrase-tokenfilter-1.0.jar in the auto-phrase-tokenfilter/dist subdirectory. Copy this file to [solr-home]/lib (you may have to create the /lib folder first). In a typical Solr 4.x install, [solr-home] would be at /example/solr. Then restart Solr.
+##Analyzer test
+With config/dictionary.txt file containing :
 
-The jar file included in this distribution was compiled with Solr 4.10.3 
+<pre>
+new york
+new-york city
+new york city
+</pre>
+
+<pre>
+curl -X GET 'localhost:9200/test_autophrasing/_analyze' -d '
+{
+    "analyzer": "my_autophrasing_analyzer",
+    "text": "san paulo and new york"
+}'
+</pre>
+
+Will produce:
+
+<pre>
+{
+  "tokens": [
+    {
+      "token": "san",
+      "start_offset": 0,
+      "end_offset": 3,
+      "type": "<ALPHANUM>",
+      "position": 0
+    },
+    {
+      "token": "paulo",
+      "start_offset": 4,
+      "end_offset": 9,
+      "type": "<ALPHANUM>",
+      "position": 2
+    },
+    {
+      "token": "new york",
+      "start_offset": 0,
+      "end_offset": 0,
+      "type": "word",
+      "position": 9
+    }
+  ]
+}
+</pre>
+
+
+
