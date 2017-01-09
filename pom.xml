@@ -18,6 +18,6 @@
 		<junit.version>4.12</junit.version>
 		<slf4j.version>1.6.4</slf4j.version>
 		<log4j.version>2.6.2</log4j.version>
-		<elasticsearch.version>5.0.1</elasticsearch.version>
+		<elasticsearch.version>5.0.2</elasticsearch.version>
 	</properties>
 </project>

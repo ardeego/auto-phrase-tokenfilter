@@ -12,4 +12,6 @@ Releases Notes
 ###solr-6.2.1-es-5.0.1 - 9 January 2017
 - IMP - elasticsearch 5.0.1 compliant
 
+###solr-6.2.1-es-5.0.2 - 9 January 2017
+- IMP - elasticsearch 5.0.2 compliant
 
