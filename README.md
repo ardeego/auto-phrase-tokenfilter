@@ -24,7 +24,7 @@ of a search index) to specific things or concepts will help to address this prob
 
 #Version
 <table>
- <tr><th>Version (tag)</th><th>Lucene / Solr version</th><th>elasticserch version</th><tr>
+ <tr><th>Version (tag)</th><th>Lucene / Solr version</th><th>elasticsearch version</th><tr>
  <tr><td>solr-4.10.3</td><td>solr-4.10.3</td><td>not supported</td></tr>
  <tr><td>solr-6.2.1</td><td>solr-6.2.1</td><td>not supported</td></tr>
  <tr><td>solr-6.2.1-es-5.0.1</td><td>solr-6.2.1</td><td>5.0.1</td></tr>
